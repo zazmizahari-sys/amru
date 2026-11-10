@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMRU / OPERASI - Dashboard Interaktif 7 Butik & 33 Staf</title>
+    <title>AMRU / OPERASI - Dashboard Pengurusan & Operasi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { background-color: #0d0f12; color: #f3f4f6; font-family: system-ui, -apple-system, sans-serif; }
         .card-bg { background-color: #161920; border: 1px solid #222632; }
@@ -17,19 +18,17 @@
     <!-- Sidebar Navigation -->
     <aside class="w-full md:w-64 card-bg border-r border-[#222632] flex flex-col justify-between p-4 shrink-0">
         <div>
-            <div class="mb-6 px-2 flex justify-between items-center">
-                <div>
-                    <h1 class="text-xl font-bold tracking-wider text-emerald-400">AMRU <span class="text-xs text-gray-400 font-normal">/ OPERASI</span></h1>
-                    <p class="text-xs text-gray-400 mt-1">7 butik · 33 staf</p>
-                </div>
+            <div class="mb-6 px-2">
+                <h1 class="text-xl font-bold tracking-wider text-emerald-400">AMRU <span class="text-xs text-gray-400 font-normal">/ OPERASI</span></h1>
+                <p class="text-xs text-gray-400 mt-1">7 butik · 33 staf</p>
             </div>
             
-            <!-- Role Switcher for Demo/Testing -->
+            <!-- Role Switcher -->
             <div class="mb-6 p-2.5 bg-[#111318] rounded-lg border border-[#222632]">
                 <label class="text-[10px] text-gray-400 uppercase tracking-wider block mb-1">Mod Paparan Peranan:</label>
                 <select id="role-selector" onchange="changeRole(this.value)" class="w-full bg-[#161920] border border-[#222632] text-xs text-emerald-400 font-medium rounded p-1.5 focus:outline-none">
-                    <option value="management">Abang / Pengurusan (Semua)</option>
-                    <option value="boutique">Staf Butik (Tanpa Spend Iklan)</option>
+                    <option value="management">Pengurusan (Semua)</option>
+                    <option value="boutique">Staf Butik (Tanpa Kos Iklan)</option>
                     <option value="creator">Content Creator</option>
                     <option value="marketing">Marketing Team</option>
                 </select>
@@ -40,10 +39,13 @@
                     <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Ringkasan
                 </button>
                 <button onclick="switchTab('sales')" id="btn-sales" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white hover:bg-[#1e2330] text-left">
-                    <i data-lucide="trending-up" class="w-4 h-4"></i> Sales & Walk-in
+                    <i data-lucide="trending-up" class="w-4 h-4"></i> Sales & Grafik Harian
                 </button>
                 <button onclick="switchTab('marketing')" id="btn-marketing" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white hover:bg-[#1e2330] text-left">
-                    <i data-lucide="megaphone" class="w-4 h-4"></i> Marketing & Content
+                    <i data-lucide="megaphone" class="w-4 h-4"></i> Marketing & Kempen
+                </button>
+                <button onclick="switchTab('quiz')" id="btn-quiz" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white hover:bg-[#1e2330] text-left">
+                    <i data-lucide="award" class="w-4 h-4"></i> Kuiz Product Knowledge
                 </button>
                 <button onclick="switchTab('tugas')" id="btn-tugas" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white hover:bg-[#1e2330] text-left">
                     <i data-lucide="check-square" class="w-4 h-4"></i> Tugas Butik
@@ -51,7 +53,7 @@
             </nav>
         </div>
         <div class="text-xs text-gray-500 px-2 pt-4 border-t border-[#222632]">
-            Versi 2.0 · Interaktif Penuh
+            Versi 3.0 · Full Feature
         </div>
     </aside>
 
@@ -82,202 +84,179 @@
 
             <div class="card-bg rounded-xl overflow-hidden">
                 <div class="p-4 border-b border-[#222632] flex justify-between items-center">
-                    <h3 class="font-medium text-sm text-white">Ringkasan Butik</h3>
+                    <h3 class="font-medium text-sm text-white">Ringkasan 7 Butik Amru</h3>
                     <span class="text-xs bg-[#222632] text-gray-300 px-2.5 py-1 rounded">Live Data</span>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">
                         <thead class="bg-[#101319] text-gray-400 text-xs uppercase border-b border-[#222632]">
                             <tr>
-                                <th class="p-3.5">Butik</th>
+                                <th class="p-3.5">Nama Butik</th>
                                 <th class="p-3.5">Jualan Oktober</th>
                                 <th class="p-3.5">Sasaran</th>
                                 <th class="p-3.5">Jualan Terkini</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-[#222632]" id="summary-table-body">
-                            <!-- Populated dynamically -->
+                            <!-- Dynamic -->
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- TAB: SALES & WALK-IN -->
+        <!-- TAB: SALES & GRAFIK -->
         <div id="tab-sales" class="space-y-6 hidden">
             <div>
-                <h2 class="text-xl font-semibold text-white">Sales & Sumber Pelanggan (Walk-in)</h2>
-                <p class="text-sm text-gray-400 mt-1">Key-in harian oleh PIC butik</p>
+                <h2 class="text-xl font-semibold text-white">Key-in Sales Harian & Grafik Prestasi</h2>
+                <p class="text-sm text-gray-400 mt-1">Masukkan data harian butik dan lihat graf trend jualan</p>
             </div>
 
             <!-- Form Key-in Sales -->
             <div class="card-bg p-5 rounded-xl space-y-4">
-                <h3 class="font-medium text-sm text-white">Borang Masuk Rekod Harian</h3>
+                <h3 class="font-medium text-sm text-white">Borang Masuk Rekod Jualan Harian</h3>
                 <form id="sales-form" onsubmit="submitSales(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
                         <label class="text-xs text-gray-400 block mb-1">Pilih Butik</label>
                         <select id="sales-boutique" class="w-full bg-[#111318] border border-[#222632] text-sm text-white rounded-lg p-2.5">
-                            <option value="SA">SA</option>
-                            <option value="AKB">AKB</option>
-                            <option value="APA">APA</option>
-                            <option value="AB">AB</option>
-                            <option value="ATM">ATM</option>
-                            <option value="AJB">AJB</option>
-                            <option value="ASP">ASP</option>
+                            <option value="Amru Shah Alam">Amru Shah Alam</option>
+                            <option value="Amru Kota Bharu">Amru Kota Bharu</option>
+                            <option value="Amru Puncak Alam">Amru Puncak Alam</option>
+                            <option value="Amru Bangi">Amru Bangi</option>
+                            <option value="Amru Taman Melati">Amru Taman Melati</option>
+                            <option value="Amru Johor Bharu">Amru Johor Bharu</option>
+                            <option value="Amru Sungai Petani">Amru Sungai Petani</option>
                         </select>
                     </div>
                     <div>
-                        <label class="text-xs text-gray-400 block mb-1">Jumlah Jualan (RM)</label>
-                        <input type="number" id="sales-amount" placeholder="Cth: 1200" required class="w-full bg-[#111318] border border-[#222632] text-sm text-white rounded-lg p-2.5">
+                        <label class="text-xs text-gray-400 block mb-1">Jualan Harian (RM)</label>
+                        <input type="number" id="sales-amount" placeholder="Cth: 1500" required class="w-full bg-[#111318] border border-[#222632] text-sm text-white rounded-lg p-2.5">
                     </div>
                     <div>
-                        <label class="text-xs text-gray-400 block mb-1">Jumlah Walk-in / Pelanggan</label>
-                        <input type="number" id="sales-walkin" placeholder="Cth: 25" required class="w-full bg-[#111318] border border-[#222632] text-sm text-white rounded-lg p-2.5">
+                        <label class="text-xs text-gray-400 block mb-1">Jumlah Walk-in</label>
+                        <input type="number" id="sales-walkin" placeholder="Cth: 30" required class="w-full bg-[#111318] border border-[#222632] text-sm text-white rounded-lg p-2.5">
                     </div>
                     <div class="flex items-end">
-                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg p-2.5 transition">Simpan Rekod</button>
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg p-2.5 transition">Simpan & Kemaskini</button>
                     </div>
                 </form>
             </div>
 
-            <!-- Senarai Rekod Masuk -->
-            <div class="card-bg rounded-xl overflow-hidden">
-                <div class="p-4 border-b border-[#222632]">
-                    <h3 class="font-medium text-sm text-white">Sejarah Rekod Harian</h3>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-[#101319] text-gray-400 text-xs uppercase border-b border-[#222632]">
-                            <tr>
-                                <th class="p-3.5">Tarikh / Masa</th>
-                                <th class="p-3.5">Butik</th>
-                                <th class="p-3.5">Jualan (RM)</th>
-                                <th class="p-3.5">Walk-in</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-[#222632]" id="sales-history-body">
-                            <tr><td colspan="4" class="p-4 text-center text-gray-500">Tiada rekod dimasukkan hari ini.</td></tr>
-                        </tbody>
-                    </table>
+            <!-- Carta Grafik Sales Harian -->
+            <div class="card-bg p-5 rounded-xl space-y-4">
+                <h3 class="font-medium text-sm text-white">Grafik Perbandingan Jumlah Jualan Terkini Mengikut Butik</h3>
+                <div class="w-full h-72">
+                    <canvas id="salesChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- TAB: MARKETING & CONTENT -->
+        <!-- TAB: MARKETING & KEMPEN -->
         <div id="tab-marketing" class="space-y-6 hidden">
             <div>
-                <h2 class="text-xl font-semibold text-white">Marketing & Content Bank</h2>
-                <p class="text-sm text-gray-400 mt-1">Kempen aktif, kos iklan (eksklusif marketing), dan bank idea</p>
+                <h2 class="text-xl font-semibold text-white">Marketing & Kempen Iklan Aktif</h2>
+                <p class="text-sm text-gray-400 mt-1">Urus kempen, bajet iklan, dan sasaran butik</p>
             </div>
 
-            <!-- Spend Iklan (Hanya nampak jika role = management atau marketing) -->
+            <!-- Ad Spend (Hanya untuk Management & Marketing) -->
             <div id="ad-spend-section" class="card-bg p-5 rounded-xl space-y-4 border-l-4 border-amber-500">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <h3 class="font-medium text-sm text-white">Pantauan Belanja Iklan (Spend)</h3>
-                        <p class="text-xs text-amber-400">Sulit: Hanya dipaparkan untuk Pengurusan & Team Marketing</p>
-                    </div>
-                </div>
+                <h3 class="font-medium text-sm text-white">Pantauan Kos Belanja Iklan (Eksklusif Marketing & Pengurusan)</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="p-4 bg-[#111318] rounded-lg border border-[#222632]">
-                        <p class="text-xs text-gray-400">Facebook Ads Spend</p>
-                        <p class="text-xl font-bold text-white mt-1">RM 1,450.00 <span class="text-xs font-normal text-emerald-400">(Aktif)</span></p>
+                        <p class="text-xs text-gray-400">Facebook Ads Spend Semasa</p>
+                        <p class="text-xl font-bold text-white mt-1">RM 2,150.00</p>
                     </div>
                     <div class="p-4 bg-[#111318] rounded-lg border border-[#222632]">
-                        <p class="text-xs text-gray-400">TikTok Ads Spend</p>
-                        <p class="text-xl font-bold text-white mt-1">RM 1,820.00 <span class="text-xs font-normal text-emerald-400">(Aktif)</span></p>
+                        <p class="text-xs text-gray-400">TikTok Ads Spend Semasa</p>
+                        <p class="text-xl font-bold text-white mt-1">RM 2,890.00</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Kempen Aktif -->
-            <div class="card-bg p-5 rounded-xl space-y-4">
-                <h3 class="font-medium text-sm text-white">Kempen Iklan Sedang Berjalan</h3>
-                <div class="space-y-2">
-                    <div class="p-3 bg-[#111318] border border-[#222632] rounded-lg flex justify-between items-center text-sm">
-                        <div>
-                            <span class="font-medium text-white">Kunjungi butik Amru</span>
-                            <p class="text-xs text-gray-400">Sasaran: Semua Butik · Bajet harian: RM100</p>
-                        </div>
-                        <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded">Facebook · Aktif</span>
-                    </div>
-                    <div class="p-3 bg-[#111318] border border-[#222632] rounded-lg flex justify-between items-center text-sm">
-                        <div>
-                            <span class="font-medium text-white">Inspirasi gaya Amru</span>
-                            <p class="text-xs text-gray-400">Sasaran: Semua Butik · Bajet harian: RM120</p>
-                        </div>
-                        <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded">TikTok · Aktif</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Content Bank & Borang Tambah Idea -->
+            <!-- Borang Tambah Kempen Iklan -->
             <div class="card-bg p-5 rounded-xl space-y-4">
                 <div class="flex justify-between items-center">
-                    <h3 class="font-medium text-sm text-white">Bank Idea Content (Semua Staf Boleh Akses)</h3>
-                    <button onclick="toggleIdeaForm()" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded transition">+ Tambah Idea Baru</button>
+                    <h3 class="font-medium text-sm text-white">Tambah Kempen Iklan Baru</h3>
                 </div>
-
-                <!-- Borang Tambah Idea (Hidden by default) -->
-                <div id="idea-form-box" class="hidden p-4 bg-[#111318] border border-[#222632] rounded-lg space-y-3">
-                    <h4 class="text-xs font-semibold text-emerald-400 uppercase">Masukkan Idea Content</h4>
-                    <input type="text" id="idea-title" placeholder="Tajuk / Konsep Idea (Cth: 3 Gaya Baju Melayu)" class="w-full bg-[#161920] border border-[#222632] text-sm text-white rounded p-2">
-                    <select id="idea-boutique" class="w-full bg-[#161920] border border-[#222632] text-sm text-white rounded p-2">
-                        <option value="Semua Butik">Untuk: Semua Butik</option>
-                        <option value="Butik SA">Butik SA</option>
-                        <option value="Butik AKB">Butik AKB</option>
-                        <option value="Butik ATM">Butik ATM</option>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <input type="text" id="campaign-name" placeholder="Nama Kempen (Cth: Promo Raya)" class="bg-[#111318] border border-[#222632] text-sm text-white rounded p-2.5">
+                    <select id="campaign-channel" class="bg-[#111318] border border-[#222632] text-sm text-white rounded p-2.5">
+                        <option value="Facebook Ads">Facebook Ads</option>
+                        <option value="TikTok Ads">TikTok Ads</option>
                     </select>
-                    <button onclick="addIdea()" class="bg-emerald-600 text-white text-xs px-4 py-2 rounded">Hantar ke Bank Idea</button>
+                    <input type="number" id="campaign-budget" placeholder="Bajet Harian (RM)" class="bg-[#111318] border border-[#222632] text-sm text-white rounded p-2.5">
+                    <button onclick="addCampaign()" class="bg-emerald-600 text-white text-sm font-medium rounded p-2.5">Lancarkan Kempen</button>
                 </div>
+            </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="content-bank-grid">
-                    <div class="p-3 bg-[#111318] border border-[#222632] rounded-lg text-sm">
-                        <p class="font-medium text-white">3 gaya daripada satu outfit</p>
-                        <p class="text-xs text-gray-400 mt-1">Semua butik · Contoh</p>
+            <!-- Senarai Kempen Aktif -->
+            <div class="card-bg p-5 rounded-xl space-y-4">
+                <h3 class="font-medium text-sm text-white">Senarai Kempen Iklan Sedang Run</h3>
+                <div class="space-y-2" id="campaign-list">
+                    <div class="p-3 bg-[#111318] border border-[#222632] rounded-lg flex justify-between items-center text-sm">
+                        <div>
+                            <span class="font-medium text-white">Kunjungi Amru Shah Alam & Bangi</span>
+                            <p class="text-xs text-gray-400">Facebook Ads · Bajet: RM150 / hari</p>
+                        </div>
+                        <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded">Aktif</span>
                     </div>
-                    <div class="p-3 bg-[#111318] border border-[#222632] rounded-lg text-sm">
-                        <p class="font-medium text-white">Kenali butik kami</p>
-                        <p class="text-xs text-gray-400 mt-1">Semua butik · Contoh</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: KUIZ PRODUCT KNOWLEDGE -->
+        <div id="tab-quiz" class="space-y-6 hidden">
+            <div>
+                <h2 class="text-xl font-semibold text-white">Kuiz Product Knowledge Staf Butik</h2>
+                <p class="text-sm text-gray-400 mt-1">Uji kefahaman staf mengenai kualiti fabrik, potongan, dan cara layanan</p>
+            </div>
+
+            <div class="card-bg p-6 rounded-xl space-y-6 max-w-2xl">
+                <div id="quiz-box">
+                    <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded">Soalan 1 daripada 3</span>
+                    <h3 class="text-lg font-medium text-white mt-3">Apakah kelebihan utama material kain koleksi baju Melayu Amru?</h3>
+                    <div class="space-y-3 mt-4">
+                        <label class="block p-3 bg-[#111318] border border-[#222632] rounded-lg cursor-pointer hover:border-emerald-500 transition text-sm">
+                            <input type="radio" name="q1" value="wrong" class="mr-2"> Mudah kedut dan perlukan Gosokan kerap
+                        </label>
+                        <label class="block p-3 bg-[#111318] border border-[#222632] rounded-lg cursor-pointer hover:border-emerald-500 transition text-sm">
+                            <input type="radio" name="q1" value="correct" class="mr-2"> Sejuk, selesa, mudah diurus & tidak mudah kedut (*Easy Iron*)
+                        </label>
+                        <label class="block p-3 bg-[#111318] border border-[#222632] rounded-lg cursor-pointer hover:border-emerald-500 transition text-sm">
+                            <input type="radio" name="q1" value="wrong" class="mr-2"> Kain tebal yang panas untuk cuaca sejuk
+                        </label>
                     </div>
-                    <div class="p-3 bg-[#111318] border border-[#222632] rounded-lg text-sm">
-                        <p class="font-medium text-white">Tip pilih saiz & padanan</p>
-                        <p class="text-xs text-gray-400 mt-1">Semua butik · Contoh</p>
-                    </div>
+                    <button onclick="submitQuiz()" class="mt-5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition">Hantar Jawapan</button>
+                </div>
+                <div id="quiz-result" class="hidden text-center py-6 space-y-3">
+                    <div class="text-4xl">🎉</div>
+                    <h3 class="text-xl font-bold text-white">Tahniah! Jawapan Anda Tepat.</h3>
+                    <p class="text-sm text-gray-400">Staf teruskan kefahaman produk demi keyakinan pelanggan di butik.</p>
+                    <button onclick="resetQuiz()" class="bg-gray-700 text-white text-xs px-4 py-2 rounded">Cuba Semula</button>
                 </div>
             </div>
         </div>
 
         <!-- TAB: TUGAS -->
         <div id="tab-tugas" class="space-y-6 hidden">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h2 class="text-xl font-semibold text-white">Tugas Butik & Pasukan</h2>
-                    <p class="text-sm text-gray-400 mt-1">Senarai tugasan harian dan status pelaksanaan</p>
-                </div>
+            <div>
+                <h2 class="text-xl font-semibold text-white">Tugas Pasukan Butik</h2>
+                <p class="text-sm text-gray-400 mt-1">Senarai tugasan harian mengikut cawangan</p>
             </div>
-
             <div class="card-bg rounded-xl overflow-hidden divide-y divide-[#222632]">
                 <div class="p-4 flex justify-between items-center text-sm">
                     <div>
-                        <p class="font-medium text-white">Rakam video gaya pemakaian</p>
-                        <p class="text-xs text-gray-400">Staf butik SA · Deadline: hari ini</p>
+                        <p class="font-medium text-white">Kemas kini stok pakaian & susun manekin butik</p>
+                        <p class="text-xs text-gray-400">Amru Shah Alam & Puncak Alam · Deadline: Hari ini</p>
                     </div>
                     <span class="text-xs bg-blue-500/10 text-blue-400 px-2.5 py-1 rounded">Sedang buat</span>
                 </div>
                 <div class="p-4 flex justify-between items-center text-sm">
                     <div>
-                        <p class="font-medium text-white">Hantar rekod jualan harian & walk-in</p>
-                        <p class="text-xs text-gray-400">PIC Butik · Deadline: tutup operasi</p>
+                        <p class="font-medium text-white">Hantar rekod jualan harian</p>
+                        <p class="text-xs text-gray-400">Semua PIC Butik · Deadline: Tutup Operasi</p>
                     </div>
                     <span class="text-xs bg-amber-500/10 text-amber-400 px-2.5 py-1 rounded">Belum mula</span>
-                </div>
-                <div class="p-4 flex justify-between items-center text-sm">
-                    <div>
-                        <p class="font-medium text-white">Edit video promosi butik</p>
-                        <p class="text-xs text-gray-400">Content creator · Deadline: esok</p>
-                    </div>
-                    <span class="text-xs bg-blue-500/10 text-blue-400 px-2.5 py-1 rounded">Sedang buat</span>
                 </div>
             </div>
         </div>
@@ -287,43 +266,40 @@
     <script>
         lucide.createIcons();
 
-        // Base Data Butik
+        // Data 7 Butik Nama Penuh
         const boutiques = [
-            { name: 'SA', oct: 18095, target: 36190, sales: 0, walkin: 0 },
-            { name: 'AKB', oct: 12359, target: 24718, sales: 0, walkin: 0 },
-            { name: 'APA', oct: 16085, target: 32170, sales: 0, walkin: 0 },
-            { name: 'AB', oct: 23855, target: 47710, sales: 0, walkin: 0 },
-            { name: 'ATM', oct: 32582, target: 65164, sales: 0, walkin: 0 },
-            { name: 'AJB', oct: 10009, target: 20018, sales: 0, walkin: 0 },
-            { name: 'ASP', oct: 5167, target: 10334, sales: 0, walkin: 0 }
+            { name: 'Amru Shah Alam', oct: 18095, target: 36190, sales: 0, walkin: 0 },
+            { name: 'Amru Kota Bharu', oct: 12359, target: 24718, sales: 0, walkin: 0 },
+            { name: 'Amru Puncak Alam', oct: 16085, target: 32170, sales: 0, walkin: 0 },
+            { name: 'Amru Bangi', oct: 23855, target: 47710, sales: 0, walkin: 0 },
+            { name: 'Amru Taman Melati', oct: 32582, target: 65164, sales: 0, walkin: 0 },
+            { name: 'Amru Johor Bharu', oct: 10009, target: 20018, sales: 0, walkin: 0 },
+            { name: 'Amru Sungai Petani', oct: 5167, target: 10334, sales: 0, walkin: 0 }
         ];
 
-        let salesHistory = [];
-        let customIdeas = [];
-
-        // Load data from localStorage if available
-        if(localStorage.getItem('amru_sales')) {
-            salesHistory = JSON.parse(localStorage.getItem('amru_sales'));
-            salesHistoryforEachSaved => {
-                // re-calculate totals
-            };
-        }
+        let activeCampaigns = [
+            { name: 'Kunjungi Amru Shah Alam & Bangi', channel: 'Facebook Ads', budget: 150 }
+        ];
 
         function switchTab(tabId) {
-            ['ringkasan', 'sales', 'marketing', 'tugas'].forEach(id => {
+            ['ringkasan', 'sales', 'marketing', 'quiz', 'tugas'].forEach(id => {
                 document.getElementById('tab-' + id).classList.add('hidden');
                 const btn = document.getElementById('btn-' + id);
-                btn.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white hover:bg-[#1e2330] text-left";
+                if(btn) btn.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white hover:bg-[#1e2330] text-left";
             });
             document.getElementById('tab-' + tabId).classList.remove('hidden');
             const activeBtn = document.getElementById('btn-' + tabId);
-            activeBtn.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition tab-active text-left text-white";
+            if(activeBtn) activeBtn.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition tab-active text-left text-white";
+            
+            if(tabId === 'sales') {
+                updateChart();
+            }
         }
 
         function changeRole(role) {
             const adSpendSec = document.getElementById('ad-spend-section');
             if(role === 'boutique') {
-                adSpendSec.style.display = 'none'; // Sembunyikan kos iklan untuk staf butik
+                adSpendSec.style.display = 'none';
             } else {
                 adSpendSec.style.display = 'block';
             }
@@ -338,7 +314,7 @@
                 totalWalkin += b.walkin;
                 tbody.innerHTML += `
                     <tr>
-                        <td class="p-3.5 font-medium">${b.name}</td>
+                        <td class="p-3.5 font-medium text-white">${b.name}</td>
                         <td class="p-3.5">RM${b.oct.toLocaleString()}</td>
                         <td class="p-3.5 text-emerald-400">RM${b.target.toLocaleString()}</td>
                         <td class="p-3.5 text-white font-semibold">RM${b.sales.toLocaleString()}</td>
@@ -350,85 +326,109 @@
 
         function submitSales(event) {
             event.preventDefault();
-            const boutique = document.getElementById('sales-boutique').value;
+            const boutiqueName = document.getElementById('sales-boutique').value;
             const amount = parseFloat(document.getElementById('sales-amount').value);
             const walkin = parseInt(document.getElementById('sales-walkin').value);
 
-            // Update boutique stats
-            const b = boutiques.find(item => item.name === boutique);
+            const b = boutiques.find(item => item.name === boutiqueName);
             if(b) {
                 b.sales += amount;
                 b.walkin += walkin;
             }
 
-            // Add to history
-            const now = new Date().toLocaleString('ms-MY');
-            salesHistory.unshift({ time: now, boutique, amount, walkin });
-
             renderSummaryTable();
-            renderSalesHistory();
-
-            alert('Rekod jualan berjaya disimpan!');
+            alert('Rekod jualan harian berjaya disimpan!');
             document.getElementById('sales-form').reset();
         }
 
-        function renderSalesHistory() {
-            const tbody = document.getElementById('sales-history-body');
-            if(salesHistory.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-gray-500">Tiada rekod dimasukkan hari ini.</td></tr>`;
+        // Chart.js Setup
+        let salesChart = null;
+        function updateChart() {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            const labels = boutiques.map(b => b.name);
+            const dataSales = boutiques.map(b => b.sales);
+
+            if(salesChart) {
+                salesChart.destroy();
+            }
+
+            salesChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Jumlah Jualan Terkini (RM)',
+                        data: dataSales,
+                        backgroundColor: '#10b981',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#fff' } } },
+                    scales: {
+                        x: { ticks: { color: '#9ca3af', font: { size: 10 } }, grid: { color: '#222632' } },
+                        y: { ticks: { color: '#9ca3af' }, grid: { color: '#222632' } }
+                    }
+                }
+            });
+        }
+
+        function addCampaign() {
+            const name = document.getElementById('campaign-name').value;
+            const channel = document.getElementById('campaign-channel').value;
+            const budget = document.getElementById('campaign-budget').value;
+
+            if(!name || !budget) {
+                alert('Sila lengkapkan maklumat kempen!');
                 return;
             }
-            tbody.innerHTML = '';
-            salesHistory.forEach(item => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="p-3.5 text-xs text-gray-400">${item.time}</td>
-                        <td class="p-3.5 font-medium">${item.boutique}</td>
-                        <td class="p-3.5 text-emerald-400">RM${item.amount.toLocaleString()}</td>
-                        <td class="p-3.5 text-blue-400">${item.walkin} orang</td>
-                    </tr>
+
+            activeCampaigns.push({ name, channel, budget });
+            renderCampaigns();
+            document.getElementById('campaign-name').value = '';
+            document.getElementById('campaign-budget').value = '';
+        }
+
+        function renderCampaigns() {
+            const list = document.getElementById('campaign-list');
+            list.innerHTML = '';
+            activeCampaigns.forEach(c => {
+                list.innerHTML += `
+                    <div class="p-3 bg-[#111318] border border-[#222632] rounded-lg flex justify-between items-center text-sm">
+                        <div>
+                            <span class="font-medium text-white">${c.name}</span>
+                            <p class="text-xs text-gray-400">${c.channel} · Bajet: RM${c.budget} / hari</p>
+                        </div>
+                        <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded">Aktif</span>
+                    </div>
                 `;
             });
         }
 
-        function toggleIdeaForm() {
-            const box = document.getElementById('idea-form-box');
-            box.classList.toggle('hidden');
-        }
-
-        function addIdea() {
-            const title = document.getElementById('idea-title').value;
-            const boutique = document.getElementById('idea-boutique').value;
-            if(!title) {
-                alert('Sila masukkan tajuk idea!');
+        function submitQuiz() {
+            const selected = document.querySelector('input[name="q1"]:checked');
+            if(!selected) {
+                alert('Sila pilih jawapan terlebih dahulu!');
                 return;
             }
-            customIdeas.unshift({ title, boutique });
-            renderIdeas();
-            document.getElementById('idea-title').value = '';
-            document.getElementById('idea-form-box').classList.add('hidden');
+            if(selected.value === 'correct') {
+                document.getElementById('quiz-box').classList.add('hidden');
+                document.getElementById('quiz-result').classList.remove('hidden');
+            } else {
+                alert('Jawapan kurang tepat. Cuba lagi!');
+            }
         }
 
-        function renderIdeas() {
-            const grid = document.getElementById('content-bank-grid');
-            let html = `
-                <div class="p-3 bg-[#111318] border border-[#222632] rounded-lg text-sm"><p class="font-medium text-white">3 gaya daripada satu outfit</p><p class="text-xs text-gray-400 mt-1">Semua butik · Contoh</p></div>
-                <div class="p-3 bg-[#111318] border border-[#222632] rounded-lg text-sm"><p class="font-medium text-white">Kenali butik kami</p><p class="text-xs text-gray-400 mt-1">Semua butik · Contoh</p></div>
-                <div class="p-3 bg-[#111318] border border-[#222632] rounded-lg text-sm"><p class="font-medium text-white">Tip pilih saiz & padanan</p><p class="text-xs text-gray-400 mt-1">Semua butik · Contoh</p></div>
-            `;
-            customIdeas.forEach(idea => {
-                html = `
-                    <div class="p-3 bg-[#111318] border border-emerald-500/50 rounded-lg text-sm">
-                        <p class="font-medium text-white">${idea.title}</p>
-                        <p class="text-xs text-emerald-400 mt-1">${idea.boutique} · Baru</p>
-                    </div>
-                ` + html;
-            });
-            grid.innerHTML = html;
+        function resetQuiz() {
+            document.getElementById('quiz-box').classList.remove('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.querySelectorAll('input[name="q1"]').forEach(el => el.checked = false);
         }
 
-        // Initialize table
         renderSummaryTable();
+        renderCampaigns();
     </script>
 </body>
 </html>
