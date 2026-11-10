@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMRU / OPERASI - Dashboard 7 Butik & 33 Staf</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { background-color: #0d0f12; color: #f3f4f6; font-family: system-ui, -apple-system, sans-serif; }
+        .card-bg { background-color: #161920; border: 1px solid #222632; }
+        .tab-active { background-color: #262b38; border-left: 4px solid #10b981; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-full md:w-64 card-bg border-r border-[#222632] flex flex-col justify-between p-4 shrink-0">
+        <div>
+            <div class="mb-8 px-2">
+                <h1 class="text-xl font-bold tracking-wider text-emerald-400">AMRU <span class="text-xs text-gray-400 font-normal">/ OPERASI</span></h1>
+                <p class="text-xs text-gray-400 mt-1">7 butik · 33 staf</p>
+            </div>
+            <nav class="space-y-1">
+                <button onclick="switchTab('ringkasan')" id="btn-ringkasan" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition tab-active text-left">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Ringkasan
+                </button>
+                <button onclick="switchTab('sales')" id="btn-sales" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white hover:bg-[#1e2330] text-left">
+                    <i data-lucide="trending-up" class="w-4 h-4"></i> Sales
+                </button>
+                <button onclick="switchTab('marketing')" id="btn-marketing" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white hover:bg-[#1e2330] text-left">
+                    <i data-lucide="megaphone" class="w-4 h-4"></i> Marketing & Content
+                </button>
+                <button onclick="switchTab('tugas')" id="btn-tugas" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white hover:bg-[#1e2330] text-left">
+                    <i data-lucide="check-square" class="w-4 h-4"></i> Tugas
+                </button>
+            </nav>
+        </div>
+        <div class="text-xs text-gray-500 px-2 pt-4 border-t border-[#222632]">
+            Versi 1.0 · Web App Operasi
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 p-6 md:p-8 overflow-y-auto">
+
+        <!-- TAB: RINGKASAN -->
+        <div id="tab-ringkasan" class="space-y-6">
+            <div>
+                <h2 class="text-xl font-semibold text-white">Prestasi Amru, satu tempat.</h2>
+                <p class="text-sm text-gray-400 mt-1">Rujukan Oktober & sasaran yang diberikan</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="card-bg p-5 rounded-xl">
+                    <p class="text-xs text-gray-400">Jualan Oktober</p>
+                    <p class="text-2xl font-bold text-white mt-1">RM118,152</p>
+                </div>
+                <div class="card-bg p-5 rounded-xl">
+                    <p class="text-xs text-gray-400">Sasaran Jualan (100% Growth)</p>
+                    <p class="text-2xl font-bold text-emerald-400 mt-1">RM236,304</p>
+                </div>
+                <div class="card-bg p-5 rounded-xl">
+                    <p class="text-xs text-gray-400">Pertumbuhan Disasarkan</p>
+                    <p class="text-2xl font-bold text-blue-400 mt-1">+100%</p>
+                </div>
+            </div>
+
+            <div class="card-bg rounded-xl overflow-hidden">
+                <div class="p-4 border-b border-[#222632] flex justify-between items-center">
+                    <h3 class="font-medium text-sm text-white">Ringkasan Butik</h3>
+                    <span class="text-xs bg-[#222632] text-gray-300 px-2.5 py-1 rounded">Retail</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-[#101319] text-gray-400 text-xs uppercase border-b border-[#222632]">
+                            <tr>
+                                <th class="p-3.5">Butik</th>
+                                <th class="p-3.5">Jualan Oktober</th>
+                                <th class="p-3.5">Sasaran</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-[#222632]">
+                            <tr><td class="p-3.5 font-medium">SA</td><td class="p-3.5">RM18,095</td><td class="p-3.5 text-emerald-400">RM36,190</td></tr>
+                            <tr><td class="p-3.5 font-medium">AKB</td><td class="p-3.5">RM12,359</td><td class="p-3.5 text-emerald-400">RM24,718</td></tr>
+                            <tr><td class="p-3.5 font-medium">APA</td><td class="p-3.5">RM16,085</td><td class="p-3.5 text-emerald-400">RM32,170</td></tr>
+                            <tr><td class="p-3.5 font-medium">AB</td><td class="p-3.5">RM23,855</td><td class="p-3.5 text-emerald-400">RM47,710</td></tr>
+                            <tr><td class="p-3.5 font-medium">ATM</td><td class="p-3.5">RM32,582</td><td class="p-3.5 text-emerald-400">RM65,164</td></tr>
+                            <tr><td class="p-3.5 font-medium">AJB</td><td class="p-3.5">RM10,009</td><td class="p-3.5 text-emerald-400">RM20,018</td></tr>
+                            <tr><td class="p-3.5 font-medium">ASP</td><td class="p-3.5">RM5,167</td><td class="p-3.5 text-emerald-400">RM10,334</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-bg p-5 rounded-xl space-y-3">
+                <h3 class="font-medium text-sm text-white">Perlu Perhatian</h3>
+                <div class="space-y-2 text-sm">
+                    <div class="p-3 bg-[#111318] rounded-lg border border-[#222632] flex justify-between items-center">
+                        <div>
+                            <p class="font-medium text-white">Semak video butik SA</p>
+                            <p class="text-xs text-gray-400">Marketing · Menunggu semakan</p>
+                        </div>
+                        <span class="text-xs bg-amber-500/10 text-amber-400 px-2 py-1 rounded">Pending</span>
+                    </div>
+                    <div class="p-3 bg-[#111318] rounded-lg border border-[#222632] flex justify-between items-center">
+                        <div>
+                            <p class="font-medium text-white">Hantar rekod jualan harian</p>
+                            <p class="text-xs text-gray-400">PIC setiap butik · Tugasan berulang</p>
+                        </div>
+                        <span class="text-xs bg-red-500/10 text-red-400 px-2 py-1 rounded">Hari Ini</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: SALES -->
+        <div id="tab-sales" class="space-y-6 hidden">
+            <div>
+                <h2 class="text-xl font-semibold text-white">Sales Butik</h2>
+                <p class="text-sm text-gray-400 mt-1">Rekod harian → pencapaian bulanan</p>
+            </div>
+
+            <div class="card-bg rounded-xl overflow-hidden">
+                <div class="p-4 border-b border-[#222632]">
+                    <h3 class="font-medium text-sm text-white">Sasaran Mengikut Butik</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-[#101319] text-gray-400 text-xs uppercase border-b border-[#222632]">
+                            <tr>
+                                <th class="p-3.5">Butik</th>
+                                <th class="p-3.5">Jualan Oktober</th>
+                                <th class="p-3.5">Sasaran</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-[#222632]">
+                            <tr><td class="p-3.5 font-medium">SA</td><td class="p-3.5">RM18,095</td><td class="p-3.5 text-emerald-400">RM36,190</td></tr>
+                            <tr><td class="p-3.5 font-medium">AKB</td><td class="p-3.5">RM12,359</td><td class="p-3.5 text-emerald-400">RM24,718</td></tr>
+                            <tr><td class="p-3.5 font-medium">APA</td><td class="p-3.5">RM16,085</td><td class="p-3.5 text-emerald-400">RM32,170</td></tr>
+                            <tr><td class="p-3.5 font-medium">AB</td><td class="p-3.5">RM23,855</td><td class="p-3.5 text-emerald-400">RM47,710</td></tr>
+                            <tr><td class="p-3.5 font-medium">ATM</td><td class="p-3.5">RM32,582</td><td class="p-3.5 text-emerald-400">RM65,164</td></tr>
+                            <tr><td class="p-3.5 font-medium">AJB</td><td class="p-3.5">RM10,009</td><td class="p-3.5 text-emerald-400">RM20,018</td></tr>
+                            <tr><td class="p-3.5 font-medium">ASP</td><td class="p-3.5">RM5,167</td><td class="p-3.5 text-emerald-400">RM10,334</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card-bg p-5 rounded-xl space-y-4">
+                <h3 class="font-medium text-sm text-white">Rekod Harian Staf</h3>
+                <p class="text-xs text-gray-400">Tarikh · Butik · Jumlah Jualan (RM) · Bilangan Transaksi</p>
+                <div class="p-6 border border-dashed border-[#222632] rounded-lg text-center text-sm text-gray-500">
+                    Seorang PIC hantar rekod setiap butik. Jualan semasa belum dimasukkan.
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: MARKETING -->
+        <div id="tab-marketing" class="space-y-6 hidden">
+            <div>
+                <h2 class="text-xl font-semibold text-white">Marketing & Content</h2>
+                <p class="text-sm text-gray-400 mt-1">Facebook · TikTok · Content staf butik & pasukan content</p>
+            </div>
+
+            <!-- Bank Idea Content -->
+            <div class="card-bg p-5 rounded-xl space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-medium text-sm text-white">Bank Idea Content</h3>
+                    <span class="text-xs text-gray-400">Idea pusat → olahan → rakaman → semakan</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="p-3 bg-[#111318] border border-[#222632] rounded-lg text-sm">
+                        <p class="font-medium text-white">3 gaya daripada satu outfit</p>
+                        <p class="text-xs text-gray-400 mt-1">Semua butik · Contoh</p>
+                    </div>
+                    <div class="p-3 bg-[#111318] border border-[#222632] rounded-lg text-sm">
+                        <p class="font-medium text-white">Kenali butik kami</p>
+                        <p class="text-xs text-gray-400 mt-1">Semua butik · Contoh</p>
+                    </div>
+                    <div class="p-3 bg-[#111318] border border-[#222632] rounded-lg text-sm">
+                        <p class="font-medium text-white">Tip pilih saiz & padanan</p>
+                        <p class="text-xs text-gray-400 mt-1">Semua butik · Contoh</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kempen Iklan -->
+            <div class="card-bg p-5 rounded-xl space-y-4">
+                <h3 class="font-medium text-sm text-white">Kempen Iklan Sedang Berjalan</h3>
+                <div class="space-y-2">
+                    <div class="p-3 bg-[#111318] border border-[#222632] rounded-lg flex justify-between items-center text-sm">
+                        <span class="font-medium text-white">Kunjungi butik Amru</span>
+                        <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded">Facebook · Aktif</span>
+                    </div>
+                    <div class="p-3 bg-[#111318] border border-[#222632] rounded-lg flex justify-between items-center text-sm">
+                        <span class="font-medium text-white">Inspirasi gaya Amru</span>
+                        <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded">TikTok · Aktif</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aliran Content -->
+            <div class="card-bg p-5 rounded-xl space-y-4">
+                <h3 class="font-medium text-sm text-white">Aliran Content</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="p-4 bg-[#111318] border border-[#222632] rounded-lg space-y-3">
+                        <p class="text-xs font-semibold text-gray-400 uppercase">Dalam Penghasilan</p>
+                        <div class="p-3 bg-[#161920] border border-[#222632] rounded text-sm">
+                            <p class="font-medium text-white">Video gaya pemakaian</p>
+                            <p class="text-xs text-gray-400 mt-1">Staf butik SA · Rakaman</p>
+                        </div>
+                        <div class="p-3 bg-[#161920] border border-[#222632] rounded text-sm">
+                            <p class="font-medium text-white">Video promosi butik</p>
+                            <p class="text-xs text-gray-400 mt-1">Content creator · Editing</p>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-[#111318] border border-[#222632] rounded-lg space-y-3">
+                        <p class="text-xs font-semibold text-gray-400 uppercase">Semakan</p>
+                        <div class="p-3 bg-[#161920] border border-[#222632] rounded text-sm">
+                            <p class="font-medium text-white">Video suasana butik</p>
+                            <p class="text-xs text-gray-400 mt-1">Staf butik ATM → Marketing</p>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-[#111318] border border-[#222632] rounded-lg space-y-3">
+                        <p class="text-xs font-semibold text-gray-400 uppercase">Sedia Diterbitkan</p>
+                        <div class="p-3 bg-[#161920] border border-[#222632] rounded text-sm">
+                            <p class="font-medium text-white">Content yang diluluskan</p>
+                            <p class="text-xs text-gray-400 mt-1">Tetapkan channel & tarikh terbit</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: TUGAS -->
+        <div id="tab-tugas" class="space-y-6 hidden">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-semibold text-white">Tugas Pasukan</h2>
+                    <p class="text-sm text-gray-400 mt-1">Setiap kerja ada PIC dan deadline</p>
+                </div>
+                <select class="bg-[#161920] border border-[#222632] text-xs text-gray-300 rounded-lg px-3 py-2">
+                    <option>Pasukan: Semua</option>
+                    <option>Staf Butik</option>
+                    <option>Content Creator</option>
+                    <option>Marketing</option>
+                </select>
+            </div>
+
+            <div class="card-bg rounded-xl overflow-hidden divide-y divide-[#222632]">
+                <div class="p-4 flex justify-between items-center text-sm">
+                    <div>
+                        <p class="font-medium text-white">Rakam video gaya pemakaian</p>
+                        <p class="text-xs text-gray-400">Staf butik SA · Deadline: hari ini · Berkaitan content</p>
+                    </div>
+                    <span class="text-xs bg-blue-500/10 text-blue-400 px-2.5 py-1 rounded">Sedang buat</span>
+                </div>
+                <div class="p-4 flex justify-between items-center text-sm">
+                    <div>
+                        <p class="font-medium text-white">Hantar rekod jualan</p>
+                        <p class="text-xs text-gray-400">PIC butik AKB · Deadline: tutup operasi</p>
+                    </div>
+                    <span class="text-xs bg-gray-500/10 text-gray-400 px-2.5 py-1 rounded">Belum mula</span>
+                </div>
+                <div class="p-4 flex justify-between items-center text-sm">
+                    <div>
+                        <p class="font-medium text-white">Edit video promosi butik</p>
+                        <p class="text-xs text-gray-400">Content creator · Deadline: esok</p>
+                    </div>
+                    <span class="text-xs bg-blue-500/10 text-blue-400 px-2.5 py-1 rounded">Sedang buat</span>
+                </div>
+                <div class="p-4 flex justify-between items-center text-sm">
+                    <div>
+                        <p class="font-medium text-white">Semak content staf butik</p>
+                        <p class="text-xs text-gray-400">Marketing · Deadline: hari ini</p>
+                    </div>
+                    <span class="text-xs bg-gray-500/10 text-gray-400 px-2.5 py-1 rounded">Belum mula</span>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        function switchTab(tabId) {
+            ['ringkasan', 'sales', 'marketing', 'tugas'].forEach(id => {
+                document.getElementById('tab-' + id).classList.add('hidden');
+                const btn = document.getElementById('btn-' + id);
+                btn.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-gray-400 hover:text-white hover:bg-[#1e2330] text-left";
+            });
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition tab-active text-left text-white";
+        }
+    </script>
+</body>
+</html>
